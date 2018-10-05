@@ -1,0 +1,14 @@
+.button-container {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	a,
+	button {
+		background: linear-gradient(to right, #4aa6f9, #83f8f8);
+		color: #fff;
+		font-weight: 600;
+		padding: 7px 40px 8px;
+		border-radius: 25px;
+	}
+}

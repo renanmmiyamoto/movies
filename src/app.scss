@@ -1,0 +1,40 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html,
+body,
+#root,
+#root > div {
+	height: 100%;
+}
+
+body {
+	font-family: "Quicksand", sans-serif;
+	font-size: 16px;
+}
+
+#root > div {
+	display: flex;
+	flex-direction: column;
+}
+
+input,
+select,
+textarea {
+	outline: none;
+}
+
+a,
+button {
+	background: transparent;
+	display: block;
+	font-family: "Delius", cursive;
+	font-size: 18px;
+	padding: 0;
+	border: 0;
+	cursor: pointer;
+	outline: none;
+}

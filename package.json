@@ -5,6 +5,7 @@
 	"dependencies": {
 		"apisauce": "^0.16.0",
 		"connected-react-router": "^4.5.0",
+		"node-sass": "^4.9.3",
 		"react": "^16.5.2",
 		"react-app-rewired": "^1.6.2",
 		"react-dom": "^16.5.2",
@@ -20,7 +21,7 @@
 		"build": "react-app-rewired build",
 		"test": "react-app-rewired test",
 		"eject": "react-scripts eject",
-		"sass": "sass --watch src/assets/scss:src/assets/css"
+		"sass": "sass --watch src/assets/scss:src/assets/css/"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
