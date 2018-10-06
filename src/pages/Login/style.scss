@@ -18,23 +18,11 @@ main {
 	justify-content: space-between;
 	margin: 0 0 40px;
 
-	&::before {
-		content: "";
-		background: linear-gradient(to right bottom, #3ba2cf, #b390dd, #a36ad2);
-		position: absolute;
-		top: 0;
-		right: 50%;
-		display: block;
-		width: 100%;
-		height: 100%;
-		border-radius: 30px;
-		z-index: 0;
-	}
-
 	section {
 		position: relative;
 		flex: 1;
 		padding: 50px 20px;
+		transition: 0.3s ease-in-out;
 
 		h2 {
 			font-size: 20px;
@@ -49,7 +37,6 @@ main {
 		}
 
 		form {
-			display: none;
 			background: #fff;
 			position: absolute;
 			top: 90px;
@@ -57,8 +44,11 @@ main {
 			width: calc(100vw - 40px);
 			padding: 50px 20px 80px;
 			border-radius: 10px;
-			box-shadow: 0 0 30px 0px rgba(#bfbfbf, 0.4);
+			box-shadow: 0 0 25px 2px rgba(#666, 0.3);
 			z-index: 2;
+			transform: scaleY(0);
+			transform-origin: 0 0;
+			transition: 0.3s ease-in-out;
 
 			.button-container {
 				position: absolute;
@@ -66,6 +56,10 @@ main {
 				left: 0;
 				width: 100%;
 				transform: translateY(-50%);
+
+				button {
+					box-shadow: 0 0 25px 2px rgba(#666, 0.3);
+				}
 			}
 
 			.errorMessage {
@@ -74,14 +68,92 @@ main {
 			}
 		}
 
+		&.sec-login {
+			form {
+				a {
+					font-size: 14px;
+					color: #bfbfbf;
+					text-align: right;
+					text-decoration: none;
+					margin: 30px 0 0;
+
+					&:hover {
+						text-decoration: underline;
+					}
+				}
+			}
+		}
+
+		&.sec-sign-up {
+			h2 {
+				text-align: right;
+			}
+		}
+
 		&.current {
+			box-shadow: 0 0 25px 4px rgba(#666, 0.3);
+
+			&.sec-login {
+				background: linear-gradient(
+					to bottom,
+					#4496ff,
+					#987fd3,
+					#d069bd
+				);
+				border-bottom-right-radius: 30px;
+				border-top-right-radius: 30px;
+
+				& ~ .arrow-select-current {
+					left: 90px;
+				}
+			}
+
+			&.sec-sign-up {
+				background: linear-gradient(
+					to bottom,
+					#768aeb,
+					#aa75c5,
+					#f160ad
+				);
+				border-bottom-left-radius: 30px;
+				border-top-left-radius: 30px;
+
+				& ~ .arrow-select-current {
+					left: 213px;
+				}
+			}
+
 			h2 {
 				color: #fff;
 			}
 
 			form {
 				display: block;
+				transform: scaleY(1);
 			}
+		}
+	}
+
+	.arrow-select-current {
+		position: absolute;
+		top: 0px;
+		width: 100px;
+		height: 91px;
+		overflow: hidden;
+		z-index: 2;
+		transition: 0.3s ease-in-out;
+
+		&::after {
+			content: "";
+			position: absolute;
+			width: 60px;
+			height: 60px;
+			background: #fff;
+			transform: rotate(45deg); /* Prefixes... */
+			top: 65px;
+			left: 25px;
+			border-top-left-radius: 5px;
+			box-shadow: 0 0 25px 2px rgba(#666, 0.3);
 		}
 	}
 }

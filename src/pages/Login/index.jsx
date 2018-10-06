@@ -14,7 +14,8 @@ class LoginPage extends Component {
 		login: {
 			email: "",
 			password: ""
-		}
+		},
+		currentForm: 0
 	};
 
 	submitForm = e => {
@@ -45,6 +46,8 @@ class LoginPage extends Component {
 		}
 	};
 
+	chageForm = () => {};
+
 	render() {
 		return (
 			<div>
@@ -53,7 +56,7 @@ class LoginPage extends Component {
 				</header>
 
 				<main>
-					<section className="current">
+					<section className="sec-login">
 						<h2>Login</h2>
 
 						<form className="login" onSubmit={this.submitForm}>
@@ -87,6 +90,8 @@ class LoginPage extends Component {
 								}}
 							/>
 
+							<a href="">Forgot password?</a>
+
 							{this.state.errorMessage && (
 								<label className="errorMessage">
 									{this.state.errorMessage}
@@ -97,8 +102,8 @@ class LoginPage extends Component {
 						</form>
 					</section>
 
-					<section>
-						<h2>Sign Up</h2>
+					<section className="sec-sign-up">
+						<h2 onClick={this.chageForm}>Sign Up</h2>
 
 						<form className="sign-up">
 							<Input
@@ -128,6 +133,8 @@ class LoginPage extends Component {
 							<Button type="sumbit" text="Sign Up" />
 						</form>
 					</section>
+
+					<span className="arrow-select-current" />
 				</main>
 			</div>
 		);
