@@ -8,7 +8,7 @@ label {
 
 	p {
 		position: absolute;
-		bottom: 5px;
+		top: 5px;
 		left: 0;
 		width: calc(100% - 20px);
 		color: #bfbfbf;
@@ -18,10 +18,18 @@ label {
 
 	svg {
 		position: absolute;
-		bottom: 5px;
+		top: 5px;
 		right: 10px;
 		fill: #bfbfbf;
 		transition: 0.3s;
+	}
+
+	.error-field {
+		display: block;
+		font-size: 14px;
+		color: #c00;
+		font-style: italic;
+		margin: 3px 0 0;
 	}
 
 	input {
@@ -46,7 +54,7 @@ label {
 		&:focus,
 		&.has-value {
 			& ~ p {
-				bottom: 30px;
+				top: -20px;
 				font-size: 14px;
 				font-weight: 600;
 			}

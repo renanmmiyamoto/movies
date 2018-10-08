@@ -6,7 +6,11 @@ import Button from "~/components/Form/Button";
 
 /* Others */
 import {FaEnvelope, FaKey, FaUser} from "react-icons/fa";
+import {Wave} from "~/components/Svg";
 import "./style.scss";
+import api from "~/services/api";
+
+import Modal from "~/components/Modal";
 
 class LoginPage extends Component {
 	state = {
@@ -15,7 +19,29 @@ class LoginPage extends Component {
 			email: "",
 			password: ""
 		},
-		currentForm: 0
+		currentForm: 0,
+		modalVisible: false
+	};
+
+	do_login = async e => {
+		try {
+			const response = await api.post("/auth/authenticate", {
+				email: this.state.login.email,
+				password: this.state.login.password
+			});
+
+			const {user, token} = response.data;
+
+			console.log(user);
+			console.log(token);
+		} catch (response) {
+			this.setState({errorMessage: response.data.error});
+
+			if (response.data.error === "Invalid password") {
+				e.target[1].classList.remove("valid-value");
+				e.target[1].classList.add("invalid-value");
+			}
+		}
 	};
 
 	submitForm = e => {
@@ -23,6 +49,8 @@ class LoginPage extends Component {
 		e.preventDefault();
 
 		if (this.state.login.email === "" || this.state.login.password === "") {
+			e.target[0].classList.add("invalid-value");
+			e.target[1].classList.add("invalid-value");
 			this.setState({
 				errorMessage: "Todos os campos são obrigatórios"
 			});
@@ -43,10 +71,31 @@ class LoginPage extends Component {
 			this.setState({
 				errorMessage: ""
 			});
+
+			this.do_login(e);
 		}
 	};
 
-	chageForm = () => {};
+	chageForm = index => {
+		this.setState({currentForm: index});
+	};
+
+	forgotPassword = e => {
+		this.setState({modalVisible: true});
+		/* try {
+			const response = await api.post("/auth/forgot_password", {
+				email: this.state.login.email
+			});
+
+			console.log(response);
+
+			if (await response.ok) {
+				this.setState({modalVisible: true});
+			}
+		} catch (response) {
+			this.setState({errorMessage: response.data.error});
+		} */
+	};
 
 	render() {
 		return (
@@ -56,8 +105,12 @@ class LoginPage extends Component {
 				</header>
 
 				<main>
-					<section className="sec-login">
-						<h2>Login</h2>
+					<section
+						className={`sec-login ${
+							this.state.currentForm === 0 ? "current" : ""
+						}`}
+					>
+						<h2 onClick={this.chageForm.bind(this, 0)}>Login</h2>
 
 						<form className="login" onSubmit={this.submitForm}>
 							<Input
@@ -65,6 +118,7 @@ class LoginPage extends Component {
 								name="E-mail"
 								icon={<FaEnvelope />}
 								value={this.state.login.email}
+								field="email"
 								onChange={e => {
 									this.setState({
 										login: {
@@ -80,6 +134,7 @@ class LoginPage extends Component {
 								name="Senha"
 								icon={<FaKey />}
 								value={this.state.login.password}
+								field="password"
 								onChange={e => {
 									this.setState({
 										login: {
@@ -90,7 +145,14 @@ class LoginPage extends Component {
 								}}
 							/>
 
-							<a href="">Forgot password?</a>
+							<a
+								href="javascript:void(0)"
+								onClick={e => {
+									this.forgotPassword(e);
+								}}
+							>
+								Forgot password?
+							</a>
 
 							{this.state.errorMessage && (
 								<label className="errorMessage">
@@ -99,11 +161,17 @@ class LoginPage extends Component {
 							)}
 
 							<Button type="sumbit" text="Login" />
+
+							<Wave />
 						</form>
 					</section>
 
-					<section className="sec-sign-up">
-						<h2 onClick={this.chageForm}>Sign Up</h2>
+					<section
+						className={`sec-sign-up ${
+							this.state.currentForm === 1 ? "current" : ""
+						}`}
+					>
+						<h2 onClick={this.chageForm.bind(this, 1)}>Sign Up</h2>
 
 						<form className="sign-up">
 							<Input
@@ -131,11 +199,20 @@ class LoginPage extends Component {
 							/>
 
 							<Button type="sumbit" text="Sign Up" />
+
+							<Wave />
 						</form>
 					</section>
 
 					<span className="arrow-select-current" />
 				</main>
+
+				<Modal
+					isVisible={this.state.modalVisible}
+					submitForm={e => {
+						this.resetPassword(e);
+					}}
+				/>
 			</div>
 		);
 	}
