@@ -3,7 +3,7 @@
 	align-items: center;
 	justify-content: center;
 
-	label + & {
+	*:not(section) label + & {
 		margin: 40px 0 0;
 	}
 
