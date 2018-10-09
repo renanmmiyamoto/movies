@@ -20,7 +20,12 @@ class LoginPage extends Component {
 			password: ""
 		},
 		currentForm: 0,
-		modalVisible: false
+		modalVisible: false,
+		resetPassword: {
+			email: "",
+			password: "",
+			token: ""
+		}
 	};
 
 	do_login = async e => {
@@ -80,22 +85,42 @@ class LoginPage extends Component {
 		this.setState({currentForm: index});
 	};
 
-	forgotPassword = e => {
-		this.setState({modalVisible: true});
-		/* try {
+	forgotPassword = async e => {
+		e.persist();
+		e.preventDefault();
+		try {
 			const response = await api.post("/auth/forgot_password", {
 				email: this.state.login.email
 			});
 
 			console.log(response);
 
-			if (await response.ok) {
-				this.setState({modalVisible: true});
-			}
+			this.setState({modalVisible: true});
 		} catch (response) {
 			this.setState({errorMessage: response.data.error});
-		} */
+		}
 	};
+
+	resetPassword = async e => {
+		e.persist();
+		e.preventDefault();
+
+		try {
+			const response = await api.post("/auth/reset_password", {
+				email: this.state.resetPassword.email,
+				password: this.state.resetPassword.password,
+				token: this.state.resetPassword.token
+			});
+
+			console.log(response);
+		} catch (response) {
+			this.setState({errorMessage: response.data.error});
+		}
+	};
+
+	componentWillUpdate(toUptade) {
+		console.log(this.state.resetPassword);
+	}
 
 	render() {
 		return (
@@ -146,7 +171,7 @@ class LoginPage extends Component {
 							/>
 
 							<a
-								href="javascript:void(0)"
+								href="/"
 								onClick={e => {
 									this.forgotPassword(e);
 								}}

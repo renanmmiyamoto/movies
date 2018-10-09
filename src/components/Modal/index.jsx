@@ -67,7 +67,7 @@ class Modal extends Component {
 							name="Senha"
 							icon={<FaKey />}
 							value={this.state.user.password}
-							field="email"
+							field="password"
 							onChange={e => {
 								this.setState({
 									login: {
