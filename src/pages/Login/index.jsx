@@ -11,21 +11,25 @@ import "./style.scss";
 import api from "~/services/api";
 
 import Modal from "~/components/Modal";
+import Loading from "~/components/Svg/Loading";
 
 class LoginPage extends Component {
 	state = {
 		errorMessage: "",
+		errorModal: "",
 		login: {
 			email: "",
 			password: ""
 		},
 		currentForm: 0,
-		modalVisible: false,
+		modalForgotPassword: false,
+		modalResetPassword: false,
 		resetPassword: {
 			email: "",
 			password: "",
 			token: ""
-		}
+		},
+		loading: false
 	};
 
 	do_login = async e => {
@@ -39,8 +43,15 @@ class LoginPage extends Component {
 
 			console.log(user);
 			console.log(token);
+
+			this.setState({
+				loading: false
+			});
 		} catch (response) {
-			this.setState({errorMessage: response.data.error});
+			this.setState({
+				errorMessage: response.data.error,
+				loading: false
+			});
 
 			if (response.data.error === "Invalid password") {
 				e.target[1].classList.remove("valid-value");
@@ -49,32 +60,19 @@ class LoginPage extends Component {
 		}
 	};
 
-	submitForm = e => {
-		e.persist();
-		e.preventDefault();
-
+	submitLogin = e => {
 		if (this.state.login.email === "" || this.state.login.password === "") {
 			e.target[0].classList.add("invalid-value");
 			e.target[1].classList.add("invalid-value");
 			this.setState({
 				errorMessage: "Todos os campos são obrigatórios"
 			});
-		} else if (!validateEmail(this.state.login.email)) {
-			this.setState({
-				errorMessage: "E-mail inválido"
-			});
-			e.target[0].classList.add("invalid-value");
-		} else if (this.state.login.password.length < 3) {
-			e.target[0].classList.add("valid-value");
-			e.target[1].classList.add("invalid-value");
-			this.setState({
-				errorMessage: "Senha com no mínimo 3 caracteres"
-			});
 		} else {
 			e.target[0].classList.add("valid-value");
 			e.target[1].classList.add("valid-value");
 			this.setState({
-				errorMessage: ""
+				errorMessage: "",
+				loading: true
 			});
 
 			this.do_login(e);
@@ -88,39 +86,50 @@ class LoginPage extends Component {
 	forgotPassword = async e => {
 		e.persist();
 		e.preventDefault();
+
 		try {
-			const response = await api.post("/auth/forgot_password", {
-				email: this.state.login.email
+			await api.post("/auth/forgot_password", {
+				email: this.state.resetPassword.email
 			});
 
-			console.log(response);
-
-			this.setState({modalVisible: true});
+			this.setState({
+				loading: false,
+				modalForgotPassword: false,
+				modalResetPassword: true,
+				errorModal: ""
+			});
 		} catch (response) {
-			this.setState({errorMessage: response.data.error});
+			this.setState({
+				loading: false,
+				errorModal: response.data.error
+			});
 		}
 	};
 
 	resetPassword = async e => {
-		e.persist();
-		e.preventDefault();
+		console.log(e);
 
 		try {
-			const response = await api.post("/auth/reset_password", {
+			await api.post("/auth/reset_password", {
 				email: this.state.resetPassword.email,
 				password: this.state.resetPassword.password,
 				token: this.state.resetPassword.token
 			});
 
-			console.log(response);
+			this.setState({
+				loading: false,
+				modalResetPassword: false,
+				errorModal: "",
+				resetPassword: {
+					email: "",
+					password: "",
+					token: ""
+				}
+			});
 		} catch (response) {
-			this.setState({errorMessage: response.data.error});
+			this.setState({errorModal: response.data.error});
 		}
 	};
-
-	componentWillUpdate(toUptade) {
-		console.log(this.state.resetPassword);
-	}
 
 	render() {
 		return (
@@ -137,7 +146,13 @@ class LoginPage extends Component {
 					>
 						<h2 onClick={this.chageForm.bind(this, 0)}>Login</h2>
 
-						<form className="login" onSubmit={this.submitForm}>
+						<form
+							className="login"
+							onSubmit={e => {
+								e.preventDefault();
+								this.submitLogin(e);
+							}}
+						>
 							<Input
 								type="text"
 								name="E-mail"
@@ -173,7 +188,8 @@ class LoginPage extends Component {
 							<a
 								href="/"
 								onClick={e => {
-									this.forgotPassword(e);
+									e.preventDefault();
+									this.setState({modalForgotPassword: true});
 								}}
 							>
 								Forgot password?
@@ -185,7 +201,7 @@ class LoginPage extends Component {
 								</label>
 							)}
 
-							<Button type="sumbit" text="Login" />
+							<Button type="submit" text="Login" />
 
 							<Wave />
 						</form>
@@ -223,7 +239,7 @@ class LoginPage extends Component {
 								icon={<FaKey />}
 							/>
 
-							<Button type="sumbit" text="Sign Up" />
+							<Button type="submit" text="Sign Up" />
 
 							<Wave />
 						</form>
@@ -232,12 +248,102 @@ class LoginPage extends Component {
 					<span className="arrow-select-current" />
 				</main>
 
-				<Modal
-					isVisible={this.state.modalVisible}
-					submitForm={e => {
-						this.resetPassword(e);
-					}}
-				/>
+				<Modal isVisible={this.state.modalForgotPassword}>
+					<h2>Forgot Password</h2>
+
+					<p>Type your e-mail to reset password.</p>
+
+					<form
+						onSubmit={e => {
+							this.setState({loading: true});
+							this.forgotPassword(e);
+						}}
+					>
+						<Input
+							type="text"
+							name="E-mail"
+							icon={<FaEnvelope />}
+							value={this.state.resetPassword.email}
+							field="email"
+							onChange={e => {
+								this.setState({
+									resetPassword: {
+										...this.state.resetPassword,
+										email: e.target.value
+									}
+								});
+							}}
+						/>
+
+						{this.state.errorModal && (
+							<label className="errorMessage">
+								{this.state.errorModal}
+							</label>
+						)}
+
+						<Button type="submit" text="OK" />
+					</form>
+				</Modal>
+
+				<Modal isVisible={this.state.modalResetPassword}>
+					<h2>Reset Password</h2>
+
+					<p>
+						We send a e-mail to {this.state.resetPassword.email}{" "}
+						with a token. Please, fill in the fields below to reset
+						your password.
+					</p>
+
+					<form
+						onSubmit={e => {
+							e.preventDefault();
+							this.setState({loading: true});
+							this.resetPassword(e);
+						}}
+					>
+						<Input
+							type="password"
+							name="Nova senha"
+							icon={<FaKey />}
+							value={this.state.resetPassword.password}
+							field="password"
+							onChange={e => {
+								this.setState({
+									resetPassword: {
+										...this.state.resetPassword,
+										password: e.target.value
+									}
+								});
+							}}
+						/>
+
+						<Input
+							type="text"
+							name="Token"
+							icon={<FaKey />}
+							value={this.state.resetPassword.token}
+							field="token"
+							onChange={e => {
+								this.setState({
+									resetPassword: {
+										...this.state.resetPassword,
+										token: e.target.value
+									}
+								});
+							}}
+						/>
+
+						{this.state.errorModal && (
+							<label className="errorMessage">
+								{this.state.errorModal}
+							</label>
+						)}
+
+						<Button type="submit" text="Resetar senha" />
+					</form>
+				</Modal>
+
+				<Loading isVisible={this.state.loading} />
 			</div>
 		);
 	}
