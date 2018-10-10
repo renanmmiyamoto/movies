@@ -23,6 +23,7 @@
 		"eject": "react-scripts eject",
 		"sass": "sass --watch src/assets/scss:src/assets/css/"
 	},
+	"homepage": "http://renanmmiyamoto.github.io/movies",
 	"eslintConfig": {
 		"extends": "react-app"
 	},
