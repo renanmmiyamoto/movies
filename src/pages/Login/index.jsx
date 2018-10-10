@@ -1,17 +1,17 @@
 import React, {Component} from "react";
 
 /* Components */
-import Input from "~/components/Form/Input";
-import Button from "~/components/Form/Button";
+import Input from "../../components/Form/Input";
+import Button from "../../components/Form/Button";
 
 /* Others */
 import {FaEnvelope, FaKey, FaUser, FaCalendar, FaMobile} from "react-icons/fa";
-import {Wave} from "~/components/Svg";
+import {Wave} from "../../components/Svg";
 import "./style.scss";
-import api from "~/services/api";
+import api from "../../services/api";
 
-import Modal from "~/components/Modal";
-import Loading from "~/components/Svg/Loading";
+import Modal from "../../components/Modal";
+import Loading from "../../components/Svg/Loading";
 
 class LoginPage extends Component {
 	state = {

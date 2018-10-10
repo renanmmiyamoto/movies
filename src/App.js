@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import Routes from "~/routes";
+import Routes from "./routes";
 import "./app.scss";
 
 class App extends Component {
