@@ -34,7 +34,9 @@ class LoginPage extends Component {
 			name: "",
 			email: "",
 			password: "",
-			confirmPassword: ""
+			confirmPassword: "",
+			bornDate: "",
+			phone: ""
 		}
 	};
 
@@ -67,15 +69,11 @@ class LoginPage extends Component {
 	};
 
 	submitLogin = e => {
-		if (this.state.login.email === "" || this.state.login.password === "") {
-			e.target[0].classList.add("invalid-value");
-			e.target[1].classList.add("invalid-value");
+		if (!this.validateForm(Array.from(e.target.elements))) {
 			this.setState({
 				errorMessage: "Todos os campos são obrigatórios"
 			});
 		} else {
-			e.target[0].classList.add("valid-value");
-			e.target[1].classList.add("valid-value");
 			this.setState({
 				errorMessage: "",
 				loading: true
@@ -142,7 +140,9 @@ class LoginPage extends Component {
 			const response = await api.post("/auth/register", {
 				name: this.state.register.name,
 				email: this.state.register.email,
-				password: this.state.register.password
+				password: this.state.register.password,
+				bornDate: this.state.register.bornDate,
+				phone: this.state.register.phone
 			});
 
 			const {user, token} = response.data;
@@ -163,35 +163,30 @@ class LoginPage extends Component {
 		}
 	};
 
+	validateForm = fields => {
+		const length = fields.length;
+
+		fields.forEach(field => {
+			if (field.value === "") {
+				field.classList.add("invalid-value");
+			}
+		});
+
+		if (fields[length - 1].classList.contains("disabled")) {
+			return false;
+		} else {
+			return true;
+		}
+	};
+
 	submitSignUp = e => {
-		if (
-			this.state.register.email === "" ||
-			this.state.register.password === ""
-		) {
-			e.target[0].classList.add("invalid-value");
-			e.target[1].classList.add("invalid-value");
-			e.target[2].classList.add("invalid-value");
-			e.target[3].classList.add("invalid-value");
+		e.persist();
+
+		if (!this.validateForm(Array.from(e.target.elements))) {
 			this.setState({
-				loading: false,
 				errorMessage: "Todos os campos são obrigatórios"
 			});
-		} else if (
-			this.state.register.password !== this.state.register.confirmPassword
-		) {
-			e.target[2].classList.remove("valid-value");
-			e.target[3].classList.remove("valid-value");
-			e.target[2].classList.add("invalid-value");
-			e.target[3].classList.add("invalid-value");
-			this.setState({
-				loading: false,
-				errorMessage: "The passwords do not match"
-			});
 		} else {
-			e.target[0].classList.add("valid-value");
-			e.target[1].classList.add("valid-value");
-			e.target[2].classList.add("valid-value");
-			e.target[3].classList.add("valid-value");
 			this.setState({
 				errorMessage: "",
 				loading: true
@@ -199,6 +194,18 @@ class LoginPage extends Component {
 
 			this.do_signUp(e);
 		}
+
+		/* if (
+			e.target[]
+		) {
+		} else {
+			this.setState({
+				errorMessage: "",
+				loading: true
+			});
+
+			this.do_signUp(e);
+		} */
 	};
 
 	render() {
@@ -345,7 +352,7 @@ class LoginPage extends Component {
 								name="Confirm Password"
 								icon={<FaKey />}
 								value={this.state.register.confirmPassword}
-								field="password"
+								field="confirm-password"
 								onChange={e => {
 									this.setState({
 										register: {
@@ -357,10 +364,11 @@ class LoginPage extends Component {
 							/>
 
 							<Input
-								type="number"
+								type="text"
 								name="Birth Date"
 								icon={<FaCalendar />}
 								value={this.state.register.bornDate}
+								hasMask="true"
 								field="date"
 								onChange={e => {
 									this.setState({
@@ -373,11 +381,12 @@ class LoginPage extends Component {
 							/>
 
 							<Input
-								type="number"
+								type="text"
 								name="Cellphone"
 								icon={<FaMobile />}
 								value={this.state.register.phone}
-								field="date"
+								hasMask="true"
+								field="phone"
 								onChange={e => {
 									this.setState({
 										register: {

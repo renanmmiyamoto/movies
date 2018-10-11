@@ -1,5 +1,8 @@
 import React, {Component} from "react";
+import DatePicker from "react-datepicker";
+import InputMask from "react-input-mask";
 
+import "react-datepicker/dist/react-datepicker.css";
 import "./style.scss";
 
 class Input extends Component {
@@ -14,10 +17,37 @@ class Input extends Component {
 
 		if (e.target.classList.contains("invalid-value")) {
 			e.target.classList.remove("invalid-value");
+		} else if (e.target.classList.contains("valid-value")) {
+			e.target.classList.remove("valid-value");
 		}
 
 		this.setState({className: classes});
 		this.setState({errorMessage: ""});
+	};
+
+	maskedField = field => {
+		let v = field.value;
+
+		if (this.props.field === "date") {
+			if (v.length === 2 || v.length === 5) {
+				v = v + "/";
+			}
+		} else if (this.props.field === "phone") {
+			if (v.length === 1) {
+				v = "(" + v;
+			}
+
+			if (v.length === 3) {
+				v = v + ") ";
+				// length = 5
+			}
+
+			if (v.length === 10) {
+				v = v + "-";
+			}
+		}
+
+		field.value = v;
 	};
 
 	validateField = e => {
@@ -27,24 +57,53 @@ class Input extends Component {
 			message: ""
 		};
 
-		switch (this.props.field) {
-			case "email":
-				if (!validateEmail(value)) {
-					error.codResposta = 0;
-					error.message = "E-mail inválido.";
-				}
-				break;
-			case "password":
-				if (value.length < 3) {
-					error.codResposta = 0;
-					error.message = "Senha com no mínimo 3 caracteres.";
-				}
-				break;
+		if (value === "") {
+			error.codResposta = 0;
+			error.message = "Required field";
+		} else {
+			switch (this.props.field) {
+				case "email":
+					if (!validateEmail(value)) {
+						error.codResposta = 0;
+						error.message = "Invalid e-mail.";
+					}
+					break;
+				case "password":
+					if (value.length < 3) {
+						error.codResposta = 0;
+						error.message = "Password with at least 3 characters.";
+					}
+					break;
+				case "confirm-password":
+					if (value.length < 3) {
+						error.codResposta = 0;
+						error.message = "Password with at least 3 characters.";
+					} else if (
+						value !==
+						e.target.parentNode.previousSibling.children[0].value
+					) {
+						error.codResposta = 0;
+						error.message = "The passwords not macth";
+					}
+					break;
+				case "date":
+					if (!validateDate(value)) {
+						error.codResposta = 0;
+						error.message = "Invalid date.";
+					}
+					break;
+				case "phone":
+					if (!validatePhone(value)) {
+						error.codResposta = 0;
+						error.message = "Invalid phone number.";
+					}
+					break;
 
-			default:
-				error.codResposta = 99;
-				error.message = "";
-				break;
+				default:
+					error.codResposta = 99;
+					error.message = "";
+					break;
+			}
 		}
 
 		if (error.codResposta !== 99) {
@@ -87,6 +146,9 @@ class Input extends Component {
 						this.props.onChange(e);
 					}}
 					field={this.props.field}
+					onKeyUp={e => {
+						this.props.hasMask && this.maskedField(e.target);
+					}}
 					onBlur={e => {
 						this.props.field
 							? this.validateField(e)
@@ -108,8 +170,18 @@ class Input extends Component {
 }
 
 export function validateEmail(email) {
-	var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+	const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 	return re.test(String(email).toLowerCase());
+}
+
+export function validateDate(date) {
+	const re = /^(((0[1-9]|[12]\d|3[01])\/(0[13578]|1[02])\/((19|[2-9]\d)\d{2}))|((0[1-9]|[12]\d|30)\/(0[13456789]|1[012])\/((19|[2-9]\d)\d{2}))|((0[1-9]|1\d|2[0-8])\/02\/((19|[2-9]\d)\d{2}))|(29\/02\/((1[6-9]|[2-9]\d)(0[48]|[2468][048]|[13579][26])|((16|[2468][048]|[3579][26])00))))$/g;
+	return re.test(date);
+}
+
+export function validatePhone(phone) {
+	const re = /^(?:\()[0-9]{2}(?:\))\s?[0-9]{4,5}(?:-)[0-9]{4}$/;
+	return re.test(phone);
 }
 
 export default Input;

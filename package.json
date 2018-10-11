@@ -5,6 +5,7 @@
 	"dependencies": {
 		"apisauce": "^0.16.0",
 		"connected-react-router": "^4.5.0",
+		"moment": "^2.22.2",
 		"node-sass": "^4.9.3",
 		"react": "^16.5.2",
 		"react-dom": "^16.5.2",
@@ -30,5 +31,9 @@
 		"not ie <= 11",
 		"not op_mini all"
 	],
-	"homepage": "http://renanmiyamoto.com.br/movies/build"
+	"homepage": "http://renanmiyamoto.com.br/movies/build",
+	"devDependencies": {
+		"react-datepicker": "^1.6.0",
+		"react-input-mask": "^2.0.4"
+	}
 }
