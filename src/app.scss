@@ -38,3 +38,19 @@ button {
 	cursor: pointer;
 	outline: none;
 }
+
+div[class^="page-"] {
+	header {
+		margin: 20px 0 40px;
+
+		h1 {
+			font-family: "Quicksand", sans-serif;
+			font-size: 45px;
+			font-weight: 100;
+			text-align: center;
+			text-transform: uppercase;
+			letter-spacing: -2px;
+			margin: 0 0 4px;
+		}
+	}
+}

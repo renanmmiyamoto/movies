@@ -1,6 +1,4 @@
 import React, {Component} from "react";
-import DatePicker from "react-datepicker";
-import InputMask from "react-input-mask";
 
 import "react-datepicker/dist/react-datepicker.css";
 import "./style.scss";

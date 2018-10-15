@@ -194,23 +194,11 @@ class LoginPage extends Component {
 
 			this.do_signUp(e);
 		}
-
-		/* if (
-			e.target[]
-		) {
-		} else {
-			this.setState({
-				errorMessage: "",
-				loading: true
-			});
-
-			this.do_signUp(e);
-		} */
 	};
 
 	render() {
 		return (
-			<div>
+			<div className="page-login">
 				<header>
 					<h1>Movies</h1>
 				</header>
