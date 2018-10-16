@@ -19,8 +19,10 @@ class Input extends Component {
 			e.target.classList.remove("valid-value");
 		}
 
-		this.setState({className: classes});
-		this.setState({errorMessage: ""});
+		this.setState({
+			className: classes,
+			errorMessage: ""
+		});
 	};
 
 	maskedField = field => {
@@ -48,8 +50,76 @@ class Input extends Component {
 		field.value = v;
 	};
 
+	checkFinish = e => {
+		let success = false;
+
+		Array.from(e.target.form.elements).forEach(element => {
+			if (element.tagName !== "BUTTON") {
+				const lastElement =
+					e.target.form.elements[e.target.form.elements.length - 2];
+				const value = element.value;
+
+				if (element === lastElement) {
+					switch (this.props.field) {
+						case "email":
+							if (validateEmail(value)) {
+								success = true;
+							}
+							break;
+						case "password":
+							console.log("password");
+							console.log(value);
+							if (value.length >= 3) {
+								success = true;
+							}
+							break;
+						case "confirm-password":
+							if (
+								value.length >= 3 &&
+								value ===
+									element.parentNode.previousSibling
+										.children[0].value
+							) {
+								success = true;
+							}
+							break;
+						case "date":
+							if (validateDate(value)) {
+								success = true;
+							}
+							break;
+						case "phone":
+							if (validatePhone(value)) {
+								success = true;
+							}
+							break;
+
+						default:
+							success = false;
+							break;
+					}
+				}
+
+				if (!success) {
+					e.target.form
+						.querySelector("button")
+						.classList.add("disabled");
+					return false;
+				} else {
+					e.target.form
+						.querySelector("button")
+						.classList.remove("disabled");
+					return true;
+				}
+			} else {
+				return false;
+			}
+		});
+	};
+
 	validateField = e => {
 		const value = e.target.value;
+
 		let error = {
 			codResposta: 99,
 			message: ""
@@ -145,12 +215,11 @@ class Input extends Component {
 					}}
 					field={this.props.field}
 					onKeyUp={e => {
+						this.checkFinish(e);
 						this.props.hasMask && this.maskedField(e.target);
 					}}
 					onBlur={e => {
-						this.props.field
-							? this.validateField(e)
-							: this.props.onBlur && this.props.onBlur(e);
+						this.validateField(e);
 						this.props.onBlur && this.props.onBlur(e);
 					}}
 				/>

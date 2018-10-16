@@ -1,4 +1,10 @@
 .page-login {
+	.content {
+		display: flex;
+		flex-direction: column;
+		flex: 1;
+	}
+
 	main {
 		position: relative;
 		flex: 1;

@@ -1,4 +1,5 @@
 import React, {Component} from "react";
+import {Redirect} from "react-router-dom";
 
 /* Components */
 import Input from "../../components/Form/Input";
@@ -10,8 +11,10 @@ import {Wave} from "../../components/Svg";
 import "./style.scss";
 import api from "../../services/api";
 
+import Page from "../Default";
 import Modal from "../../components/Modal";
-import Loading from "../../components/Svg/Loading";
+
+import {isAuthenticated} from "../../services/auth";
 
 class LoginPage extends Component {
 	state = {
@@ -40,6 +43,21 @@ class LoginPage extends Component {
 		}
 	};
 
+	submitLogin = e => {
+		if (!this.validateForm(Array.from(e.target.elements))) {
+			this.setState({
+				errorMessage: "Todos os campos são obrigatórios"
+			});
+		} else {
+			this.setState({
+				errorMessage: "",
+				loading: true
+			});
+
+			this.do_login(e);
+		}
+	};
+
 	do_login = async e => {
 		try {
 			const response = await api.post("/auth/authenticate", {
@@ -49,8 +67,8 @@ class LoginPage extends Component {
 
 			const {user, token} = response.data;
 
-			console.log(user);
-			console.log(token);
+			localStorage.setItem("@MOVIES:user", user);
+			localStorage.setItem("@MOVIES:token", token);
 
 			this.setState({
 				loading: false
@@ -65,21 +83,6 @@ class LoginPage extends Component {
 				e.target[1].classList.remove("valid-value");
 				e.target[1].classList.add("invalid-value");
 			}
-		}
-	};
-
-	submitLogin = e => {
-		if (!this.validateForm(Array.from(e.target.elements))) {
-			this.setState({
-				errorMessage: "Todos os campos são obrigatórios"
-			});
-		} else {
-			this.setState({
-				errorMessage: "",
-				loading: true
-			});
-
-			this.do_login(e);
 		}
 	};
 
@@ -135,34 +138,6 @@ class LoginPage extends Component {
 		}
 	};
 
-	do_signUp = async () => {
-		try {
-			const response = await api.post("/auth/register", {
-				name: this.state.register.name,
-				email: this.state.register.email,
-				password: this.state.register.password,
-				bornDate: this.state.register.bornDate,
-				phone: this.state.register.phone
-			});
-
-			const {user, token} = response.data;
-
-			console.log(user);
-			console.log(token);
-
-			this.setState({
-				loading: false
-			});
-		} catch (response) {
-			console.log(response);
-
-			this.setState({
-				errorMessage: response.data.error,
-				loading: false
-			});
-		}
-	};
-
 	validateForm = fields => {
 		const length = fields.length;
 
@@ -196,209 +171,227 @@ class LoginPage extends Component {
 		}
 	};
 
+	do_signUp = async () => {
+		try {
+			const response = await api.post("/auth/register", {
+				name: this.state.register.name,
+				email: this.state.register.email,
+				password: this.state.register.password,
+				bornDate: this.state.register.bornDate,
+				phone: parseInt(this.state.register.phone.replace(/[^\d]/g, ""))
+			});
+
+			const {user, token} = response.data;
+
+			localStorage.setItem("@MOVIES:user", user);
+			localStorage.setItem("@MOVIES:token", token);
+
+			this.setState({loading: false});
+		} catch (response) {
+			this.setState({
+				errorMessage: response.data.error,
+				loading: false
+			});
+		}
+	};
+
 	render() {
-		return (
-			<div className="page-login">
-				<header>
-					<h1>Movies</h1>
-				</header>
+		const template = (
+			<Page currentPage="login" loading={this.state.loading}>
+				<section
+					className={`sec-login ${
+						this.state.currentForm === 0 ? "current" : ""
+					}`}
+				>
+					<h2 onClick={this.chageForm.bind(this, 0)}>Login</h2>
 
-				<main>
-					<section
-						className={`sec-login ${
-							this.state.currentForm === 0 ? "current" : ""
-						}`}
+					<form
+						className="login"
+						onSubmit={e => {
+							e.preventDefault();
+							this.submitLogin(e);
+						}}
 					>
-						<h2 onClick={this.chageForm.bind(this, 0)}>Login</h2>
+						<Input
+							type="text"
+							name="E-mail"
+							icon={<FaEnvelope />}
+							value={this.state.login.email}
+							field="email"
+							onChange={e => {
+								this.setState({
+									login: {
+										...this.state.login,
+										email: e.target.value
+									}
+								});
+							}}
+						/>
 
-						<form
-							className="login"
-							onSubmit={e => {
+						<Input
+							type="password"
+							name="Password"
+							icon={<FaKey />}
+							value={this.state.login.password}
+							field="password"
+							onChange={e => {
+								this.setState({
+									login: {
+										...this.state.login,
+										password: e.target.value
+									}
+								});
+							}}
+						/>
+
+						<a
+							href="/"
+							onClick={e => {
 								e.preventDefault();
-								this.submitLogin(e);
+								this.setState({modalForgotPassword: true});
 							}}
 						>
-							<Input
-								type="text"
-								name="E-mail"
-								icon={<FaEnvelope />}
-								value={this.state.login.email}
-								field="email"
-								onChange={e => {
-									this.setState({
-										login: {
-											...this.state.login,
-											email: e.target.value
-										}
-									});
-								}}
-							/>
+							Forgot password?
+						</a>
 
-							<Input
-								type="password"
-								name="Password"
-								icon={<FaKey />}
-								value={this.state.login.password}
-								field="password"
-								onChange={e => {
-									this.setState({
-										login: {
-											...this.state.login,
-											password: e.target.value
-										}
-									});
-								}}
-							/>
+						{this.state.errorMessage && (
+							<label className="errorMessage">
+								{this.state.errorMessage}
+							</label>
+						)}
 
-							<a
-								href="/"
-								onClick={e => {
-									e.preventDefault();
-									this.setState({modalForgotPassword: true});
-								}}
-							>
-								Forgot password?
-							</a>
+						<Wave />
 
-							{this.state.errorMessage && (
-								<label className="errorMessage">
-									{this.state.errorMessage}
-								</label>
-							)}
+						<Button type="submit" text="Login" />
+					</form>
+				</section>
 
-							<Wave />
+				<section
+					className={`sec-sign-up ${
+						this.state.currentForm === 1 ? "current" : ""
+					}`}
+				>
+					<h2 onClick={this.chageForm.bind(this, 1)}>Sign Up</h2>
 
-							<Button type="submit" text="Login" />
-						</form>
-					</section>
-
-					<section
-						className={`sec-sign-up ${
-							this.state.currentForm === 1 ? "current" : ""
-						}`}
+					<form
+						className="sign-up"
+						onSubmit={e => {
+							e.preventDefault();
+							this.setState({loading: true});
+							this.submitSignUp(e);
+						}}
 					>
-						<h2 onClick={this.chageForm.bind(this, 1)}>Sign Up</h2>
-
-						<form
-							className="sign-up"
-							onSubmit={e => {
-								e.preventDefault();
-								this.setState({loading: true});
-								this.submitSignUp(e);
+						<Input
+							type="text"
+							name="Nome Completo"
+							icon={<FaUser />}
+							value={this.state.register.name}
+							field="name"
+							onChange={e => {
+								this.setState({
+									register: {
+										...this.state.register,
+										name: e.target.value
+									}
+								});
 							}}
-						>
-							<Input
-								type="text"
-								name="Nome Completo"
-								icon={<FaUser />}
-								value={this.state.register.name}
-								field="name"
-								onChange={e => {
-									this.setState({
-										register: {
-											...this.state.register,
-											name: e.target.value
-										}
-									});
-								}}
-							/>
+						/>
 
-							<Input
-								type="text"
-								name="E-mail"
-								icon={<FaEnvelope />}
-								value={this.state.register.email}
-								field="email"
-								onChange={e => {
-									this.setState({
-										register: {
-											...this.state.register,
-											email: e.target.value
-										}
-									});
-								}}
-							/>
+						<Input
+							type="text"
+							name="E-mail"
+							icon={<FaEnvelope />}
+							value={this.state.register.email}
+							field="email"
+							onChange={e => {
+								this.setState({
+									register: {
+										...this.state.register,
+										email: e.target.value
+									}
+								});
+							}}
+						/>
 
-							<Input
-								type="password"
-								name="Password"
-								icon={<FaKey />}
-								value={this.state.register.password}
-								field="password"
-								onChange={e => {
-									this.setState({
-										register: {
-											...this.state.register,
-											password: e.target.value
-										}
-									});
-								}}
-							/>
+						<Input
+							type="password"
+							name="Password"
+							icon={<FaKey />}
+							value={this.state.register.password}
+							field="password"
+							onChange={e => {
+								this.setState({
+									register: {
+										...this.state.register,
+										password: e.target.value
+									}
+								});
+							}}
+						/>
 
-							<Input
-								type="password"
-								name="Confirm Password"
-								icon={<FaKey />}
-								value={this.state.register.confirmPassword}
-								field="confirm-password"
-								onChange={e => {
-									this.setState({
-										register: {
-											...this.state.register,
-											confirmPassword: e.target.value
-										}
-									});
-								}}
-							/>
+						<Input
+							type="password"
+							name="Confirm Password"
+							icon={<FaKey />}
+							value={this.state.register.confirmPassword}
+							field="confirm-password"
+							onChange={e => {
+								this.setState({
+									register: {
+										...this.state.register,
+										confirmPassword: e.target.value
+									}
+								});
+							}}
+						/>
 
-							<Input
-								type="text"
-								name="Birth Date"
-								icon={<FaCalendar />}
-								value={this.state.register.bornDate}
-								hasMask="true"
-								field="date"
-								onChange={e => {
-									this.setState({
-										register: {
-											...this.state.register,
-											bornDate: e.target.value
-										}
-									});
-								}}
-							/>
+						<Input
+							type="text"
+							name="Birth Date"
+							icon={<FaCalendar />}
+							value={this.state.register.bornDate}
+							hasMask="true"
+							field="date"
+							onChange={e => {
+								this.setState({
+									register: {
+										...this.state.register,
+										bornDate: e.target.value
+									}
+								});
+							}}
+						/>
 
-							<Input
-								type="text"
-								name="Cellphone"
-								icon={<FaMobile />}
-								value={this.state.register.phone}
-								hasMask="true"
-								field="phone"
-								onChange={e => {
-									this.setState({
-										register: {
-											...this.state.register,
-											phone: e.target.value
-										}
-									});
-								}}
-							/>
+						<Input
+							type="text"
+							name="Cellphone"
+							icon={<FaMobile />}
+							value={this.state.register.phone}
+							hasMask="true"
+							field="phone"
+							onChange={e => {
+								this.setState({
+									register: {
+										...this.state.register,
+										phone: e.target.value
+									}
+								});
+							}}
+						/>
 
-							{this.state.errorMessage && (
-								<label className="errorMessage">
-									{this.state.errorMessage}
-								</label>
-							)}
+						{this.state.errorMessage && (
+							<label className="errorMessage">
+								{this.state.errorMessage}
+							</label>
+						)}
 
-							<Wave />
+						<Wave />
 
-							<Button type="submit" text="Sign Up" />
-						</form>
-					</section>
+						<Button type="submit" text="Sign Up" />
+					</form>
+				</section>
 
-					<span className="arrow-select-current" />
-				</main>
+				<span className="arrow-select-current" />
 
 				<Modal isVisible={this.state.modalForgotPassword}>
 					<h2>Forgot Password</h2>
@@ -494,10 +487,14 @@ class LoginPage extends Component {
 						<Button type="submit" text="Resetar senha" />
 					</form>
 				</Modal>
-
-				<Loading isVisible={this.state.loading} />
-			</div>
+			</Page>
 		);
+
+		if (isAuthenticated()) {
+			return <Redirect to="/home" />;
+		} else {
+			return template;
+		}
 	}
 }
 

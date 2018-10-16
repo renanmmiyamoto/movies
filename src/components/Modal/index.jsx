@@ -4,22 +4,32 @@ import {FaTimesCircle} from "react-icons/fa";
 /* Components */
 import "./style.scss";
 
+/****
+ * FIXME:
+ * MODAL ERRADO
+ */
+
 class Modal extends Component {
+	modalElement = React.createRef();
+
 	state = {
-		isVisible: this.props.isVisible
+		isVisible: false
 	};
 
-	componentWillReceiveProps(nextProps) {
-		this.setState({isVisible: nextProps.isVisible});
+	closeModal = e => {
+		this.setState({isVisible: false});
+	};
+
+	componentWillReceiveProps(newProps) {
+		if (newProps.isVisible === true) {
+			this.setState({isVisible: true});
+		}
 	}
-
-	closeModal = () => {
-		this.setState({isVisible: !this.props.isVisible});
-	};
 
 	render() {
 		return (
 			<div
+				ref={this.modalElement}
 				className={`modal ${this.state.isVisible ? " is-visible" : ""}`}
 			>
 				<button className="close-modal" onClick={this.closeModal}>
