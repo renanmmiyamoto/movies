@@ -67,7 +67,7 @@ class LoginPage extends Component {
 
 			const {user, token} = response.data;
 
-			localStorage.setItem("@MOVIES:user", user);
+			localStorage.setItem("@MOVIES:user", JSON.stringify(user));
 			localStorage.setItem("@MOVIES:token", token);
 
 			this.setState({
@@ -183,7 +183,7 @@ class LoginPage extends Component {
 
 			const {user, token} = response.data;
 
-			localStorage.setItem("@MOVIES:user", user);
+			localStorage.setItem("@MOVIES:user", JSON.stringify(user));
 			localStorage.setItem("@MOVIES:token", token);
 
 			this.setState({loading: false});
@@ -208,6 +208,7 @@ class LoginPage extends Component {
 					<form
 						className="login"
 						onSubmit={e => {
+							e.persist();
 							e.preventDefault();
 							this.submitLogin(e);
 						}}

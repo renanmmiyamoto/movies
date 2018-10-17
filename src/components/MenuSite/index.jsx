@@ -13,12 +13,17 @@ import {
 import profile from "./profile.jpg";
 import Loading from "../../components/Svg/Loading";
 
-import {isAuthenticated} from "../../services/auth";
+import {isAuthenticated, getUser} from "../../services/auth";
 
 class MenuSite extends Component {
 	state = {
-		loading: false
+		loading: false,
+		user: getUser()
 	};
+
+	componentDidMount() {
+		console.log(this.state.user);
+	}
 
 	logout = e => {
 		e.preventDefault();
@@ -39,8 +44,8 @@ class MenuSite extends Component {
 						</figure>
 
 						<div>
-							<span className="name">Teste teste</span>
-							<span className="email">teste@teste.com</span>
+							<p className="name">{this.state.user.name}</p>
+							<p className="email">{this.state.user.email}</p>
 						</div>
 					</section>
 

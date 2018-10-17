@@ -67,8 +67,6 @@ class Input extends Component {
 							}
 							break;
 						case "password":
-							console.log("password");
-							console.log(value);
 							if (value.length >= 3) {
 								success = true;
 							}

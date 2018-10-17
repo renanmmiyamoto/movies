@@ -7,5 +7,5 @@ export const isAuthenticated = () => {
 };
 
 export const getUser = () => {
-	return localStorage.getItem("@MOVIES:user");
+	return JSON.parse(localStorage.getItem("@MOVIES:user"));
 };

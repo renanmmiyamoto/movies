@@ -11,6 +11,7 @@
 	visibility: hidden;
 	transform: translateX(-100%);
 	transition: 0.4s ease-in-out;
+	overflow: hidden;
 	z-index: 9998;
 
 	&.is-visible {
@@ -39,6 +40,7 @@
 		align-items: flex-start;
 		align-content: space-between;
 		flex-direction: column;
+		width: 100%;
 		flex: 1;
 
 		div {
@@ -60,6 +62,7 @@
 				align-content: center;
 				justify-content: center;
 				width: 80px;
+				min-width: 80px;
 				height: 80px;
 				margin: 0 10px 0 0;
 
@@ -70,9 +73,15 @@
 			}
 
 			div {
-				span {
+				overflow: hidden;
+
+				p {
 					display: block;
 					color: #fff;
+					text-align: left;
+					white-space: nowrap;
+					text-overflow: ellipsis;
+					overflow: hidden;
 
 					&.name {
 						font-size: 17px;
