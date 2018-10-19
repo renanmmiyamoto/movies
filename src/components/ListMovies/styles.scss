@@ -1,0 +1,19 @@
+.list-movies {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	padding: 0 20px;
+
+	.item {
+		background: #fff;
+		width: 45%;
+		margin: 0 0 20px;
+		border-radius: 5px;
+
+		h2 {
+			font-size: 16px;
+			text-align: center;
+		}
+	}
+}

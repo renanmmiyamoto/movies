@@ -1,9 +1,9 @@
 import React, {Component} from "react";
+import {Link} from "react-router-dom";
 
 import Page from "../Default";
-
+import ListMovies from "../../components/ListMovies";
 import apiMovies from "../../services/api_movies";
-
 import "./style.scss";
 
 class Genres extends Component {
@@ -14,7 +14,19 @@ class Genres extends Component {
 		loading: false
 	};
 
-	async componentWillMount() {
+	componentWillMount() {
+		const {id} = this.props.match.params;
+
+		if (!id) {
+			this.listGenres();
+		}
+	}
+
+	componentDidMount() {
+		this.setState({loading: false});
+	}
+
+	listGenres = async () => {
 		this.setState({loading: true});
 
 		try {
@@ -26,24 +38,46 @@ class Genres extends Component {
 		} catch (error) {
 			this.setState({errorMessage: error.data.status_message});
 		}
-	}
-
-	componentDidMount() {
-		setTimeout(() => {
-			this.setState({loading: false});
-		}, 3000);
-	}
+	};
 
 	render() {
-		return (
-			<Page currentPage="genres" loading={this.state.loading}>
-				<section className="list-genres">
-					{this.state.genres.map(genre => (
-						<article key={genre.id}>{genre.name}</article>
-					))}
-				</section>
-			</Page>
-		);
+		const {loading, genres} = this.state;
+
+		if (this.props.match.params.id) {
+			return (
+				<Page currentPage="genres" loading={loading}>
+					<ListMovies
+						paramsMovies={{
+							with_genres: this.props.match.params.id
+						}}
+					/>
+
+					{this.state.errorMessage && (
+						<p className="errorMessage">
+							{this.state.errorMessage}
+						</p>
+					)}
+				</Page>
+			);
+		} else {
+			return (
+				<Page currentPage="genres" loading={loading}>
+					<section className="list-genres">
+						{genres.map(genre => (
+							<Link key={genre.id} to={`/genres/${genre.id}`}>
+								{genre.name}
+							</Link>
+						))}
+					</section>
+
+					{this.state.errorMessage && (
+						<p className="errorMessage">
+							{this.state.errorMessage}
+						</p>
+					)}
+				</Page>
+			);
+		}
 	}
 }
 

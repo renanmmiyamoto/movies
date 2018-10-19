@@ -20,5 +20,11 @@ export const publicRoutes = [
 		name: "Genres",
 		component: Genres,
 		isPrivate: true
+	},
+	{
+		path: "/genres/:id",
+		name: "Genres",
+		component: Genres,
+		isPrivate: true
 	}
 ];

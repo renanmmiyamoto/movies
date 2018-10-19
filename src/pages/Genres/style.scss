@@ -1,4 +1,12 @@
 .page-genres {
 	.list-genres {
+		padding: 0 20px;
+
+		a {
+			height: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 }

@@ -38,8 +38,8 @@ class LoginPage extends Component {
 			email: "",
 			password: "",
 			confirmPassword: "",
-			bornDate: "",
-			phone: ""
+			birthDate: "",
+			cellphone: ""
 		}
 	};
 
@@ -60,7 +60,7 @@ class LoginPage extends Component {
 
 	do_login = async e => {
 		try {
-			const response = await api.post("/auth/authenticate", {
+			const response = await api.post("/user/login", {
 				email: this.state.login.email,
 				password: this.state.login.password
 			});
@@ -95,7 +95,7 @@ class LoginPage extends Component {
 		e.preventDefault();
 
 		try {
-			await api.post("/auth/forgot_password", {
+			await api.post("/user/forgot_password", {
 				email: this.state.resetPassword.email
 			});
 
@@ -117,7 +117,7 @@ class LoginPage extends Component {
 		console.log(e);
 
 		try {
-			await api.post("/auth/reset_password", {
+			await api.post("/user/reset_password", {
 				email: this.state.resetPassword.email,
 				password: this.state.resetPassword.password,
 				token: this.state.resetPassword.token
@@ -173,12 +173,14 @@ class LoginPage extends Component {
 
 	do_signUp = async () => {
 		try {
-			const response = await api.post("/auth/register", {
+			const response = await api.post("/user/register", {
 				name: this.state.register.name,
 				email: this.state.register.email,
 				password: this.state.register.password,
-				bornDate: this.state.register.bornDate,
-				phone: parseInt(this.state.register.phone.replace(/[^\d]/g, ""))
+				birthDate: this.state.register.birthDate,
+				cellphone: parseInt(
+					this.state.register.cellphone.replace(/[^\d]/g, "")
+				)
 			});
 
 			const {user, token} = response.data;
@@ -350,14 +352,14 @@ class LoginPage extends Component {
 							type="text"
 							name="Birth Date"
 							icon={<FaCalendar />}
-							value={this.state.register.bornDate}
+							value={this.state.register.birthDate}
 							hasMask="true"
 							field="date"
 							onChange={e => {
 								this.setState({
 									register: {
 										...this.state.register,
-										bornDate: e.target.value
+										birthDate: e.target.value
 									}
 								});
 							}}
@@ -365,16 +367,16 @@ class LoginPage extends Component {
 
 						<Input
 							type="text"
-							name="Cellphone"
+							name="Cellcellphone"
 							icon={<FaMobile />}
-							value={this.state.register.phone}
+							value={this.state.register.cellphone}
 							hasMask="true"
-							field="phone"
+							field="cellphone"
 							onChange={e => {
 								this.setState({
 									register: {
 										...this.state.register,
-										phone: e.target.value
+										cellphone: e.target.value
 									}
 								});
 							}}
