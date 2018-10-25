@@ -47,12 +47,12 @@ button {
 div[class^="page-"] {
 	overflow-x: hidden;
 
-	header {
+	header.site-header {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
 		padding: 0 20px;
-		margin: 20px 0 40px;
+		margin: 20px 0;
 
 		svg {
 			font-size: 20px;
@@ -83,6 +83,27 @@ div[class^="page-"] {
 			opacity: 0;
 			visibility: hidden;
 			transition: 0.3s;
+		}
+
+		.page-name {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			font-family: "Delius", sans-serif;
+			font-size: 25px;
+			color: #987fd3;
+			padding: 0 20px;
+			margin: 0 0 30px;
+
+			svg {
+				width: 30px;
+				margin: 0 15px 0 0;
+
+				&:last-of-type {
+					transform: rotate(180deg);
+					margin: 0 0 0 15px;
+				}
+			}
 		}
 	}
 }

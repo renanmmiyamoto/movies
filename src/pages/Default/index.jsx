@@ -41,7 +41,7 @@ class Page extends Component {
 						}
 					}}
 				>
-					<header>
+					<header className="site-header">
 						{isAuthenticated() && (
 							<FaStream
 								onClick={() => {
@@ -55,7 +55,19 @@ class Page extends Component {
 						{isAuthenticated() && <FaSearch />}
 					</header>
 
-					<main>{this.props.children}</main>
+					<main>
+						{this.props.hasHeaderPage ? (
+							<header className="page-header">
+								{this.props.titlePage && (
+									<h2>{this.props.titlePage}</h2>
+								)}
+							</header>
+						) : (
+							""
+						)}
+
+						{this.props.children}
+					</main>
 				</div>
 
 				<Loading isVisible={this.props.loading} />

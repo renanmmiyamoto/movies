@@ -21,10 +21,6 @@ class MenuSite extends Component {
 		user: getUser()
 	};
 
-	componentDidMount() {
-		console.log(this.state.user);
-	}
-
 	logout = e => {
 		e.preventDefault();
 

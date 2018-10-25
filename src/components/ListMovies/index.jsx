@@ -19,6 +19,8 @@ class ListMovies extends Component {
 				...this.state.paramsMovies
 			});
 
+			console.log(response.data);
+
 			const {results, ...infoResults} = response.data;
 
 			this.setState({

@@ -22,7 +22,7 @@ export const publicRoutes = [
 		isPrivate: true
 	},
 	{
-		path: "/genres/:id",
+		path: "/genres/:id/:name",
 		name: "Genres",
 		component: Genres,
 		isPrivate: true
